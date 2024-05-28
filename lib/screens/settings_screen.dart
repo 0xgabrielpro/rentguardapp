@@ -1,5 +1,5 @@
-// settings_screen.dart
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart'; // Import SharedPreferences
 
 class SettingsScreen extends StatelessWidget {
   final String userRole = 'admin';
@@ -20,7 +20,7 @@ class SettingsScreen extends StatelessWidget {
           leading: Icon(Icons.exit_to_app),
           title: Text('Logout'),
           onTap: () {
-            // Handle logout
+            _logout(context); 
           },
         ),
         if (userRole == 'tenant')
@@ -57,5 +57,11 @@ class SettingsScreen extends StatelessWidget {
         ],
       ],
     );
+  }
+
+  void _logout(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('token'); 
+    Navigator.pushReplacementNamed(context, '/login');
   }
 }

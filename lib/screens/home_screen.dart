@@ -3,6 +3,7 @@ import 'package:rentguard/models/property.dart';
 import 'package:rentguard/services/api_services.dart';
 import 'package:rentguard/widgets/property_card.dart';
 import 'package:rentguard/widgets/property_detail_dialog.dart';
+import 'package:shared_preferences/shared_preferences.dart'; 
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -13,11 +14,26 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Property> _properties = [];
   List<Property> _filteredProperties = [];
   final TextEditingController _searchController = TextEditingController();
+  late SharedPreferences _prefs; 
 
   @override
   void initState() {
     super.initState();
-    _fetchProperties();
+    _initSharedPreferences();
+  }
+
+  Future<void> _initSharedPreferences() async {
+    _prefs = await SharedPreferences.getInstance();
+    _checkAuthentication();
+  }
+
+  void _checkAuthentication() {
+    final token = _prefs.getString('token');
+    if (token == null) {
+      Navigator.pushReplacementNamed(context, '/login');
+    } else {
+      _fetchProperties();
+    }
   }
 
   void _fetchProperties() async {
@@ -45,9 +61,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   title: Text('RentGuard'),
-      // ),
       body: Padding(
         padding: EdgeInsets.all(8.0),
         child: Column(
