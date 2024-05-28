@@ -20,7 +20,7 @@ class _LoginScreenState extends State<LoginScreen> {
         _passwordController.text,
       );
       if (success) {
-        Navigator.pushReplacementNamed(context, '/home');
+        Navigator.pushReplacementNamed(context, '/');
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Invalid email or password')),

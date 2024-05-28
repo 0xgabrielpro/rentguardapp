@@ -1,8 +1,10 @@
-// import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'package:rentguard/services/api_services.dart';
 
 class AuthService {
+  static SharedPreferences? _prefs;
+
   static Future<bool> register(String username, String email, String phone,
       String password, String gender) async {
     final response = await ApiService.postRequest('register', {
@@ -10,7 +12,6 @@ class AuthService {
       'email': email,
       'phone': phone,
       'password': password,
-      'gender': gender,
     });
 
     return response.statusCode == 201;
@@ -24,8 +25,12 @@ class AuthService {
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      print(data);
-      // Save the token
+      final token = data['token'];
+
+      // Save token to SharedPreferences
+      _prefs = await SharedPreferences.getInstance();
+      await _prefs!.setString('token', token);
+
       return true;
     } else {
       return false;
@@ -33,6 +38,8 @@ class AuthService {
   }
 
   static Future<void> logout() async {
-    // Implement logout functionality
+    // Remove token from SharedPreferences upon logout
+    _prefs = await SharedPreferences.getInstance();
+    await _prefs!.remove('token');
   }
 }
