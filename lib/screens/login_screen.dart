@@ -28,7 +28,7 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       final success = await AuthService.login(email, password);
       if (success) {
-        Navigator.pushReplacementNamed(context, '/home');
+        Navigator.pushReplacementNamed(context, '/');
       } else {
         setState(() {
           _errorMessage = 'Invalid email or password';
