@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:rentguard/services/auth_service.dart';
 import 'package:rentguard/screens/forgot_password_screen.dart';
+import 'package:rentguard/screens/register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -77,6 +78,16 @@ class _LoginScreenState extends State<LoginScreen> {
                     onPressed: _login,
                     child: Text('Login'),
                   ),
+            SizedBox(height: 10),
+            TextButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => RegisterScreen()),
+                );
+              },
+              child: Text('Register'),
+            ),
             TextButton(
               onPressed: () {
                 Navigator.push(
