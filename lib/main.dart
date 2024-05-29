@@ -3,6 +3,7 @@ import 'package:rentguard/screens/login_screen.dart';
 import 'package:rentguard/screens/register_screen.dart';
 import 'package:rentguard/screens/home_screen.dart';
 import 'package:rentguard/screens/settings_screen.dart';
+import 'package:rentguard/screens/forgot_password_screen.dart';
 
 void main() {
   runApp(MyApp());
@@ -22,6 +23,7 @@ class MyApp extends StatelessWidget {
         '/login': (context) => LoginScreen(),
         '/register': (context) => RegisterScreen(),
         '/home': (context) => HomeScreen(),
+        '/forgot-password': (context) => ForgotPasswordScreen(),
       },
     );
   }

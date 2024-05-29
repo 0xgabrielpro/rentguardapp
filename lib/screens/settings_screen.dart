@@ -1,8 +1,48 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart'; // Import SharedPreferences
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:rentguard/screens/login_screen.dart';
+import 'package:rentguard/screens/reset_password_screen.dart';
 
-class SettingsScreen extends StatelessWidget {
-  final String userRole = 'admin';
+class SettingsScreen extends StatefulWidget {
+  @override
+  _SettingsScreenState createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends State<SettingsScreen> {
+  String userRole = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _checkAuth();
+  }
+
+  void _checkAuth() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+    if (token == null) {
+      // If token is not found, navigate to the login screen
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => LoginScreen()),
+      );
+    } else {
+      // Retrieve user role from preferences
+      setState(() {
+        userRole = prefs.getString('role') ?? '';
+      });
+    }
+  }
+
+  void _logout() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('token'); // Remove the token
+    await prefs.remove('role');  // Remove the role
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => LoginScreen()),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -13,15 +53,23 @@ class SettingsScreen extends StatelessWidget {
           leading: Icon(Icons.edit),
           title: Text('Edit Profile'),
           onTap: () {
-            // edit profile screen
+            // Navigate to edit profile screen
+          },
+        ),
+        ListTile(
+          leading: Icon(Icons.lock_reset),
+          title: Text('Reset Password'),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ResetPasswordScreen()),
+            );
           },
         ),
         ListTile(
           leading: Icon(Icons.exit_to_app),
           title: Text('Logout'),
-          onTap: () {
-            _logout(context); 
-          },
+          onTap: _logout,
         ),
         if (userRole == 'tenant')
           ListTile(
@@ -57,11 +105,5 @@ class SettingsScreen extends StatelessWidget {
         ],
       ],
     );
-  }
-
-  void _logout(BuildContext context) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('token'); 
-    Navigator.pushReplacementNamed(context, '/login');
   }
 }
