@@ -19,13 +19,13 @@ class Property {
 
   factory Property.fromJson(Map<String, dynamic> json) {
     return Property(
-      id: json['id'],
-      location: json['location'],
-      price: json['price'],
-      description: json['description'],
-      image: json['image'],
-      ownerId: json['owner_id'],
-      ownerPhone: json['owner_phone'],
+      id: json['id'] ?? 0,
+      location: json['location'] ?? '',
+      price: (json['price'] as num?)?.toDouble() ?? 0.0,
+      description: json['description'] ?? '',
+      image: json['image'] ?? '',
+      ownerId: json['owner_id'] ?? 0,
+      ownerPhone: json['owner_phone'] ?? '',
     );
   }
 }

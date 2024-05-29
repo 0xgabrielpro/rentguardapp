@@ -44,6 +44,7 @@ class ApiService {
         throw Exception('Failed to load properties: ${response.statusCode}');
       }
     } catch (e) {
+      print('Error fetching properties: $e');
       throw Exception('Failed to load properties: $e');
     }
   }
