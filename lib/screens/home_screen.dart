@@ -17,6 +17,8 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Property> _filteredProperties = [];
   final TextEditingController _searchController = TextEditingController();
   bool _isAuthenticated = false;
+  bool _isLoading = true;
+  String? _errorMessage;
 
   @override
   void initState() {
@@ -37,6 +39,11 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _fetchProperties() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
     try {
       List<Property> properties = await ApiService.fetchProperties();
       setState(() {
@@ -44,7 +51,13 @@ class _HomeScreenState extends State<HomeScreen> {
         _filteredProperties = properties;
       });
     } catch (e) {
-      // Handle error
+      setState(() {
+        _errorMessage = 'Failed to load properties';
+      });
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -61,44 +74,48 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(title: const Text('Home')),
       body: _isAuthenticated
-          ? Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children: [
-                  TextField(
-                    controller: _searchController,
-                    decoration: const InputDecoration(
-                      labelText: 'Search by location',
-                      prefixIcon: Icon(Icons.search),
-                      border: OutlineInputBorder(),
-                    ),
-                    onChanged: (query) => _filterProperties(query),
-                  ),
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: _filteredProperties.length,
-                      itemBuilder: (context, index) {
-                        final property = _filteredProperties[index];
-                        return PropertyCard(
-                          property: property,
-                          onViewPressed: () {
-                            showDialog(
-                              context: context,
-                              builder: (context) =>
-                                  PropertyDetailDialog(property: property),
-                            );
-                          },
-                        );
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            )
-          : const Center(
-              child: CircularProgressIndicator(),
-            ),
+          ? _isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : _errorMessage != null
+                  ? Center(child: Text(_errorMessage!))
+                  : Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        children: [
+                          TextField(
+                            controller: _searchController,
+                            decoration: const InputDecoration(
+                              labelText: 'Search by location',
+                              prefixIcon: Icon(Icons.search),
+                              border: OutlineInputBorder(),
+                            ),
+                            onChanged: (query) => _filterProperties(query),
+                          ),
+                          Expanded(
+                            child: ListView.builder(
+                              itemCount: _filteredProperties.length,
+                              itemBuilder: (context, index) {
+                                final property = _filteredProperties[index];
+                                return PropertyCard(
+                                  property: property,
+                                  onViewPressed: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) =>
+                                          PropertyDetailDialog(
+                                              property: property),
+                                    );
+                                  },
+                                );
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+          : const Center(child: CircularProgressIndicator()),
     );
   }
 }
