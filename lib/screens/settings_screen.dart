@@ -23,13 +23,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
     if (token == null) {
-      // If token is not found, navigate to the login screen
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const LoginScreen()),
       );
     } else {
-      // Retrieve user role from preferences
       setState(() {
         userRole = prefs.getString('role') ?? '';
       });
@@ -38,8 +36,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   void _logout() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('token'); // Remove the token
-    await prefs.remove('role');  // Remove the role
+    await prefs.remove('token');
+    await prefs.remove('role'); 
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => const LoginScreen()),
@@ -64,7 +62,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const ResetPasswordScreen()),
+              MaterialPageRoute(
+                  builder: (context) => const ResetPasswordScreen()),
             );
           },
         ),
