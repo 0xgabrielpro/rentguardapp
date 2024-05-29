@@ -8,7 +8,7 @@ class CommonInputField extends StatelessWidget {
   final String? Function(String?)? validator;
   final Widget? suffixIcon;
 
-  CommonInputField({
+  const CommonInputField({super.key, 
     required this.controller,
     required this.labelText,
     required this.prefixIcon,

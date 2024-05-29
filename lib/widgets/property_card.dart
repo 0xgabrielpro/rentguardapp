@@ -5,7 +5,7 @@ class PropertyCard extends StatelessWidget {
   final Property property;
   final VoidCallback onViewPressed;
 
-  const PropertyCard({required this.property, required this.onViewPressed});
+  const PropertyCard({super.key, required this.property, required this.onViewPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -21,35 +21,35 @@ class PropertyCard extends StatelessWidget {
               children: [
                 Text(
                   property.location,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 5),
+                const SizedBox(height: 5),
                 Text(
                   'Price: \$${property.price}',
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 16,
                     color: Colors.green,
                   ),
                 ),
-                SizedBox(height: 5),
+                const SizedBox(height: 5),
                 Text(
                   property.description,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 14,
                     color: Colors.grey,
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
-                    child: Text('View'),
                     onPressed: onViewPressed,
+                    child: const Text('View'),
                   ),
                 ),
               ],

@@ -6,6 +6,8 @@ import 'package:rentguard/widgets/property_card.dart';
 import 'package:rentguard/widgets/property_detail_dialog.dart';
 
 class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -61,12 +63,12 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       body: _isAuthenticated
           ? Padding(
-              padding: EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(8.0),
               child: Column(
                 children: [
                   TextField(
                     controller: _searchController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Search by location',
                       prefixIcon: Icon(Icons.search),
                       border: OutlineInputBorder(),
@@ -94,7 +96,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
             )
-          : Center(
+          : const Center(
               child: CircularProgressIndicator(),
             ),
     );

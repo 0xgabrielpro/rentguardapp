@@ -4,6 +4,8 @@ import 'package:rentguard/screens/login_screen.dart';
 import 'package:rentguard/screens/reset_password_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
+  const SettingsScreen({super.key});
+
   @override
   _SettingsScreenState createState() => _SettingsScreenState();
 }
@@ -24,7 +26,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       // If token is not found, navigate to the login screen
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => LoginScreen()),
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
       );
     } else {
       // Retrieve user role from preferences
@@ -40,64 +42,64 @@ class _SettingsScreenState extends State<SettingsScreen> {
     await prefs.remove('role');  // Remove the role
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => LoginScreen()),
+      MaterialPageRoute(builder: (context) => const LoginScreen()),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return ListView(
-      padding: EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(16.0),
       children: [
         ListTile(
-          leading: Icon(Icons.edit),
-          title: Text('Edit Profile'),
+          leading: const Icon(Icons.edit),
+          title: const Text('Edit Profile'),
           onTap: () {
             // Navigate to edit profile screen
           },
         ),
         ListTile(
-          leading: Icon(Icons.lock_reset),
-          title: Text('Reset Password'),
+          leading: const Icon(Icons.lock_reset),
+          title: const Text('Reset Password'),
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => ResetPasswordScreen()),
+              MaterialPageRoute(builder: (context) => const ResetPasswordScreen()),
             );
           },
         ),
         ListTile(
-          leading: Icon(Icons.exit_to_app),
-          title: Text('Logout'),
+          leading: const Icon(Icons.exit_to_app),
+          title: const Text('Logout'),
           onTap: _logout,
         ),
         if (userRole == 'tenant')
           ListTile(
-            leading: Icon(Icons.business),
-            title: Text('Become House Agent'),
+            leading: const Icon(Icons.business),
+            title: const Text('Become House Agent'),
             onTap: () {
               // Submit request to become house agent
             },
           ),
         if (userRole == 'owner')
           ListTile(
-            leading: Icon(Icons.home),
-            title: Text('Manage Properties'),
+            leading: const Icon(Icons.home),
+            title: const Text('Manage Properties'),
             onTap: () {
               // Navigate to manage properties screen
             },
           ),
         if (userRole == 'admin') ...[
           ListTile(
-            leading: Icon(Icons.supervised_user_circle),
-            title: Text('Manage Users'),
+            leading: const Icon(Icons.supervised_user_circle),
+            title: const Text('Manage Users'),
             onTap: () {
               // Navigate to manage users screen
             },
           ),
           ListTile(
-            leading: Icon(Icons.home_work),
-            title: Text('Manage All Properties'),
+            leading: const Icon(Icons.home_work),
+            title: const Text('Manage All Properties'),
             onTap: () {
               // Navigate to manage all properties screen
             },

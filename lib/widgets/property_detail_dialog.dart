@@ -5,7 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 class PropertyDetailDialog extends StatelessWidget {
   final Property property;
 
-  const PropertyDetailDialog({
+  const PropertyDetailDialog({super.key, 
     required this.property,
   });
 
@@ -18,7 +18,7 @@ class PropertyDetailDialog extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Image.network(property.image),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Text('Price: \$${property.price}'),
           Text('Description: ${property.description}'),
           GestureDetector(
@@ -29,14 +29,14 @@ class PropertyDetailDialog extends StatelessWidget {
               }
             },
             child: Text('Phone: ${property.ownerPhone}',
-                style: TextStyle(color: Colors.blue)),
+                style: const TextStyle(color: Colors.blue)),
           ),
         ],
       ),
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: Text('Close'),
+          child: const Text('Close'),
         ),
       ],
     );

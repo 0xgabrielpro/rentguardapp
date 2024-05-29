@@ -6,10 +6,12 @@ import 'package:rentguard/screens/settings_screen.dart';
 import 'package:rentguard/screens/forgot_password_screen.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -19,17 +21,19 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/login',
       routes: {
-        '/': (context) => MainScreen(),
-        '/login': (context) => LoginScreen(),
-        '/register': (context) => RegisterScreen(),
-        '/home': (context) => HomeScreen(),
-        '/forgot-password': (context) => ForgotPasswordScreen(),
+        '/': (context) => const MainScreen(),
+        '/login': (context) => const LoginScreen(),
+        '/register': (context) => const RegisterScreen(),
+        '/home': (context) => const HomeScreen(),
+        '/forgot-password': (context) => const ForgotPasswordScreen(),
       },
     );
   }
 }
 
 class MainScreen extends StatefulWidget {
+  const MainScreen({super.key});
+
   @override
   _MainScreenState createState() => _MainScreenState();
 }
@@ -38,9 +42,9 @@ class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
   String userRole = 'tenant';
 
-  static List<Widget> _widgetOptions = <Widget>[
-    HomeScreen(),
-    SettingsScreen(),
+  static final List<Widget> _widgetOptions = <Widget>[
+    const HomeScreen(),
+    const SettingsScreen(),
   ];
 
   void _onItemTapped(int index) {
@@ -53,7 +57,7 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('RentGuard'),
+        title: const Text('RentGuard'),
       ),
       body: _widgetOptions.elementAt(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
