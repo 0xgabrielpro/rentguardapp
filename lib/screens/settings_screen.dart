@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:rentguard/screens/login_screen.dart';
-import 'package:rentguard/screens/reset_password_screen.dart';
+// import 'package:rentguard/screens/reset_password_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -37,7 +37,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void _logout() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('token');
-    await prefs.remove('role'); 
+    await prefs.remove('role');
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => const LoginScreen()),
@@ -56,17 +56,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
             // Navigate to edit profile screen
           },
         ),
-        ListTile(
-          leading: const Icon(Icons.lock_reset),
-          title: const Text('Reset Password'),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const ResetPasswordScreen()),
-            );
-          },
-        ),
+        // ListTile(
+        //   leading: const Icon(Icons.lock_reset),
+        //   title: const Text('Reset Password'),
+        //   onTap: () {
+        //     Navigator.push(
+        //       context,
+        //       MaterialPageRoute(
+        //           builder: (context) => const ResetPasswordScreen()),
+        //     );
+        //   },
+        // ),
         ListTile(
           leading: const Icon(Icons.exit_to_app),
           title: const Text('Logout'),
