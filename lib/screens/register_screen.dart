@@ -15,7 +15,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
 
@@ -26,7 +27,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
         _emailController.text,
         _phoneController.text,
         _passwordController.text,
-        'gender', // Add logic to capture gender
       );
       if (success) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -122,7 +122,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 obscureText: _obscureConfirmPassword,
                 suffixIcon: IconButton(
                   icon: Icon(
-                    _obscureConfirmPassword ? Icons.visibility : Icons.visibility_off,
+                    _obscureConfirmPassword
+                        ? Icons.visibility
+                        : Icons.visibility_off,
                   ),
                   onPressed: () {
                     setState(() {

@@ -19,7 +19,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void _login() async {
     setState(() {
       _isLoading = true;
-      _errorMessage = null;
+      _errorMessage = "";
     });
 
     final email = _emailController.text;
@@ -85,7 +85,8 @@ class _LoginScreenState extends State<LoginScreen> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const RegisterScreen()),
+                  MaterialPageRoute(
+                      builder: (context) => const RegisterScreen()),
                 );
               },
               child: const Text('Register'),
