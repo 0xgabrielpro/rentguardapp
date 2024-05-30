@@ -39,7 +39,7 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
-  String userRole = 'tenant';
+  // String userRole = 'tenant';
 
   static final List<Widget> _widgetOptions = <Widget>[
     const HomeScreen(),

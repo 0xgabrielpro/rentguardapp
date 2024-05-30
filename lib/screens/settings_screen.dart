@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:rentguard/screens/become_agence.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:rentguard/screens/login_screen.dart';
-// import 'package:rentguard/screens/reset_password_screen.dart';
+import 'package:rentguard/screens/edit_profile_screen.dart';
+import 'package:rentguard/screens/reset_password_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -54,19 +56,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
           title: const Text('Edit Profile'),
           onTap: () {
             // Navigate to edit profile screen
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const EditProfileScreen()),
+            );
           },
         ),
-        // ListTile(
-        //   leading: const Icon(Icons.lock_reset),
-        //   title: const Text('Reset Password'),
-        //   onTap: () {
-        //     Navigator.push(
-        //       context,
-        //       MaterialPageRoute(
-        //           builder: (context) => const ResetPasswordScreen()),
-        //     );
-        //   },
-        // ),
+        ListTile(
+          leading: const Icon(Icons.lock_reset),
+          title: const Text('Reset Password'),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const ResetPasswordScreen()),
+            );
+          },
+        ),
         ListTile(
           leading: const Icon(Icons.exit_to_app),
           title: const Text('Logout'),
@@ -78,6 +85,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
             title: const Text('Become House Agent'),
             onTap: () {
               // Submit request to become house agent
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const BecomeAgentScreen()),
+              );
             },
           ),
         if (userRole == 'owner')

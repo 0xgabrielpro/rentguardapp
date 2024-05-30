@@ -65,17 +65,33 @@ class ApiService {
     }
   }
 
+  static Future<String> getUserById(int userId) async {
+    final url = Uri.parse('$baseUrl/users/$userId');
+    try {
+      final response =
+          await http.get(url, headers: {'Content-Type': 'application/json'});
+      if (response.statusCode == 200) {
+        final jsonResponse = json.decode(response.body);
+        return jsonResponse;
+      } else {
+        throw Exception('Failed to load user: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Failed to load user: $e');
+    }
+  }
+
   static Future<http.Response> resetPassword(
-      String token, String currentPassword, String newPassword) async {
+      String email, String newPassword) async {
     final url = Uri.parse('$baseUrl/users/reset-password');
     return await http.post(
       url,
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
+        // 'Authorization': 'Bearer $token',
       },
       body: jsonEncode({
-        'current_password': currentPassword,
+        'email': email,
         'new_password': newPassword,
       }),
     );
@@ -92,5 +108,43 @@ class ApiService {
         'newPassword': newPassword,
       }),
     );
+  }
+
+  static Future<bool> updateUserProfile(
+      int id, String username, String email, String phone) async {
+    final url = Uri.parse('$baseUrl/users/update-profile');
+    try {
+      final response = await http.put(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(
+            {'id': id, 'username': username, 'email': email, 'phone': phone}),
+      );
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        throw Exception(
+            'Failed to update user profile: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Failed to update user profile: $e');
+    }
+  }
+
+  static Future<bool> sendAgentRequest(int userId, String agencyName,
+      String experience, String contactNumber) async {
+    final url = Uri.parse('$baseUrl/users/agent_request');
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'user_id': userId,
+        'agency_name': agencyName,
+        'experience': experience,
+        'contact_number': contactNumber,
+      }),
+    );
+
+    return response.statusCode == 200;
   }
 }

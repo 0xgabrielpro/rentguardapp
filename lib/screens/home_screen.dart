@@ -6,7 +6,7 @@ import 'package:rentguard/widgets/property_card.dart';
 import 'package:rentguard/widgets/property_detail_dialog.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  const HomeScreen({Key? key}) : super(key: key);
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -19,6 +19,7 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _isAuthenticated = false;
   bool _isLoading = true;
   String? _errorMessage;
+  String? _userRole;
 
   @override
   void initState() {
@@ -32,10 +33,18 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {
         _isAuthenticated = true;
       });
+      _fetchUserRole(); // Fetch user role from SharedPreferences
       _fetchProperties();
     } else {
       Navigator.pushReplacementNamed(context, '/login');
     }
+  }
+
+  void _fetchUserRole() async {
+    final role = await AuthService.getRole();
+    setState(() {
+      _userRole = role;
+    });
   }
 
   void _fetchProperties() async {
@@ -74,7 +83,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(title: const Text('Home')),
       body: _isAuthenticated
           ? _isLoading
               ? const Center(child: CircularProgressIndicator())
@@ -108,6 +116,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                               property: property),
                                     );
                                   },
+                                  onDeletePressed: () {
+                                    // Implement delete logic here
+                                  },
+                                  userRole: _userRole,
+                                  ownerId: property.ownerId,
                                 );
                               },
                             ),
