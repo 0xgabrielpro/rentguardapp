@@ -3,7 +3,7 @@ import 'package:rentguard/services/api_services.dart';
 import 'package:rentguard/widgets/common_input_field.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
-  const ForgotPasswordScreen({Key? key}) : super(key: key);
+  const ForgotPasswordScreen({super.key});
 
   @override
   _ForgotPasswordScreenState createState() => _ForgotPasswordScreenState();

@@ -10,7 +10,7 @@ class CommonInputField extends StatelessWidget {
   final TextInputType? keyboardType;
 
   const CommonInputField({
-    Key? key,
+    super.key,
     required this.controller,
     required this.labelText,
     required this.prefixIcon,
@@ -18,7 +18,7 @@ class CommonInputField extends StatelessWidget {
     this.suffixIcon,
     this.validator,
     this.keyboardType,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

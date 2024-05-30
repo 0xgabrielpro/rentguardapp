@@ -6,9 +6,9 @@ class PropertyDetailDialog extends StatelessWidget {
   final Property property;
 
   const PropertyDetailDialog({
-    Key? key,
+    super.key,
     required this.property,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +31,7 @@ class PropertyDetailDialog extends StatelessWidget {
               children: [
                 Text(
                   property.location,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
                   ),
@@ -49,7 +49,7 @@ class PropertyDetailDialog extends StatelessWidget {
                 const SizedBox(height: 10),
                 Text(
                   'Price: \$${property.price}',
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 16,
                     color: Colors.green,
                   ),
@@ -73,7 +73,7 @@ class PropertyDetailDialog extends StatelessWidget {
                   },
                   child: Row(
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.phone,
                         color: Colors.blue,
                       ),
@@ -82,7 +82,7 @@ class PropertyDetailDialog extends StatelessWidget {
                         padding: const EdgeInsets.only(left: 5),
                         child: Text(
                           property.ownerPhone,
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Colors.blue,
                             fontSize: 16,
                           ),

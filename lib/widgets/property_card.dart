@@ -9,13 +9,13 @@ class PropertyCard extends StatelessWidget {
   final int ownerId; // Add ownerId parameter
 
   const PropertyCard({
-    Key? key,
+    super.key,
     required this.property,
     required this.onViewPressed,
     required this.userRole,
     required this.onDeletePressed,
     required this.ownerId,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +60,7 @@ class PropertyCard extends StatelessWidget {
                   top: 10,
                   right: 10,
                   child: IconButton(
-                    icon: Icon(Icons.delete),
+                    icon: const Icon(Icons.delete),
                     onPressed: onDeletePressed,
                   ),
                 ),
@@ -134,7 +134,7 @@ class PropertyCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    child: Text(
+                    child: const Text(
                       'View Details',
                       style: TextStyle(
                         color: Colors.white, // Set text color to white

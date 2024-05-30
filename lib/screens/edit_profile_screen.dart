@@ -3,7 +3,7 @@ import 'package:rentguard/services/api_services.dart';
 import 'package:rentguard/widgets/common_input_field.dart';
 
 class EditProfileScreen extends StatefulWidget {
-  const EditProfileScreen({Key? key}) : super(key: key);
+  const EditProfileScreen({super.key});
 
   @override
   _EditProfileScreenState createState() => _EditProfileScreenState();

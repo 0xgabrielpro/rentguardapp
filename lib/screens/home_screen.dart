@@ -6,7 +6,7 @@ import 'package:rentguard/widgets/property_card.dart';
 import 'package:rentguard/widgets/property_detail_dialog.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
   _HomeScreenState createState() => _HomeScreenState();

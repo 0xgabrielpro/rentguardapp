@@ -5,7 +5,7 @@ import 'package:rentguard/screens/register_screen.dart';
 import 'package:rentguard/widgets/common_input_field.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+  const LoginScreen({super.key});
 
   @override
   _LoginScreenState createState() => _LoginScreenState();

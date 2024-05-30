@@ -4,7 +4,7 @@ import 'package:rentguard/services/api_services.dart';
 import 'package:rentguard/widgets/common_input_field.dart';
 
 class BecomeAgentScreen extends StatefulWidget {
-  const BecomeAgentScreen({Key? key}) : super(key: key);
+  const BecomeAgentScreen({super.key});
 
   @override
   _BecomeAgentScreenState createState() => _BecomeAgentScreenState();
@@ -38,19 +38,19 @@ class _BecomeAgentScreenState extends State<BecomeAgentScreen> {
 
           if (success) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Request sent successfully')),
+              const SnackBar(content: Text('Request sent successfully')),
             );
             Navigator.pop(context);
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
+              const SnackBar(
                   content:
                       Text('Failed to send request. Please try again later.')),
             );
           }
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('User ID not found. Please log in again.')),
+            const SnackBar(content: Text('User ID not found. Please log in again.')),
           );
         }
       } catch (e) {
@@ -139,7 +139,7 @@ class _BecomeAgentScreenState extends State<BecomeAgentScreen> {
                       ),
                       const SizedBox(height: 20),
                       _isLoading
-                          ? CircularProgressIndicator()
+                          ? const CircularProgressIndicator()
                           : ElevatedButton(
                               onPressed: _submitRequest,
                               style: ElevatedButton.styleFrom(
