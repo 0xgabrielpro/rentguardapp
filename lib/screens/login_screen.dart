@@ -43,7 +43,8 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     } catch (e) {
       setState(() {
-        _errorMessage = e.toString();
+        // _errorMessage = e.toString();
+        _errorMessage = "connection error";
       });
     } finally {
       setState(() {
