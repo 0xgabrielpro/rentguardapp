@@ -205,6 +205,7 @@ class _ManagePropertiesScreenState extends State<ManagePropertiesScreen> {
                                   return null;
                                 },
                               ),
+                              const SizedBox(height: 10),
                               CommonInputField(
                                 controller: _priceController,
                                 labelText: 'Price',
@@ -217,6 +218,7 @@ class _ManagePropertiesScreenState extends State<ManagePropertiesScreen> {
                                   return null;
                                 },
                               ),
+                              const SizedBox(height: 10),
                               CommonInputField(
                                 controller: _descriptionController,
                                 labelText: 'Description',
@@ -228,6 +230,7 @@ class _ManagePropertiesScreenState extends State<ManagePropertiesScreen> {
                                   return null;
                                 },
                               ),
+                      	      const SizedBox(height: 10),
                               CommonInputField(
                                 controller: _imageController,
                                 labelText: 'Image URL',
