@@ -30,28 +30,34 @@ class AuthService {
       await init();
     }
 
-    final response = await ApiService.postRequest('login', {
-      'email': email,
-      'password': password,
-    });
+    try {
+      final response = await ApiService.postRequest('login', {
+        'email': email,
+        'password': password,
+      });
 
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      final token = data['token'];
-      final role = data['role'];
-      final id = data['id'];
-      final email = data['email'];
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final token = data['token'];
+        final role = data['role'];
+        final id = data['id'];
+        final email = data['email'];
 
-      if (token != null && role != null && id != null) {
-        await _prefs!.setString('token', token);
-        await _prefs!.setString('role', role);
-        await _prefs!.setInt('id', id);
-        await _prefs!.setString('enail', email);
-        return true;
+        if (token != null && role != null && id != null && email != null) {
+          await _prefs!.setString('token', token);
+          await _prefs!.setString('role', role);
+          await _prefs!.setInt('id', id);
+          await _prefs!.setString('email', email);
+          return true;
+        } else {
+          return false;
+        }
       } else {
+        print('Failed to login: ${response.body}');
         return false;
       }
-    } else {
+    } catch (e) {
+      print('Error during login: $e');
       return false;
     }
   }
@@ -84,7 +90,7 @@ class AuthService {
     if (_prefs == null) {
       await init();
     }
-    return _prefs!.getInt('id');
+    return _prefs?.getInt('id');
   }
 
   static Future<String?> getEmail() async {
@@ -94,21 +100,19 @@ class AuthService {
     return _prefs!.getString('email');
   }
 
-  // static Future<String> getUserProfile() async {
-  //   if (_prefs == null) {
-  //     await init();
-  //   }
+  static Future<Map<String, dynamic>> getUserProfile() async {
+    if (_prefs == null) {
+      await init();
+    }
 
-  //   final int? userId = await getId();
-  //   if (userId == null) {
-  //     throw Exception('User ID not found');
-  //   }
+    final int? userId = await getId();
+    if (userId == null) {
+      throw Exception('User ID not found');
+    }
 
-  //   final response = await ApiService.getUserById(userId);
-
-  //   final Map<String, dynamic> userData = jsonDecode(response.body);
-  //   return UserProfile.fromJson(userData);
-  // }
+    final response = await ApiService.getUserById(userId);
+    return response;
+  }
 
   static Future<bool> updateUserProfile(
       int id, String username, String email, String phone) async {
@@ -120,6 +124,9 @@ class AuthService {
         phone,
       );
       if (response) {
+        await _prefs!.setString('username', username);
+        await _prefs!.setString('email', email);
+        await _prefs!.setString('phone', phone);
         return true;
       } else {
         throw Exception('Failed to update user profile');

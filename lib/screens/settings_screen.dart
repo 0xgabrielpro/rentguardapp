@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:rentguard/screens/agent_requests_screen.dart';
 import 'package:rentguard/screens/become_agence.dart';
+import 'package:rentguard/screens/manage_properties_screen.dart';
+import 'package:rentguard/screens/manage_users_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:rentguard/screens/login_screen.dart';
 import 'package:rentguard/screens/edit_profile_screen.dart';
@@ -55,7 +58,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
           leading: const Icon(Icons.edit),
           title: const Text('Edit Profile'),
           onTap: () {
-            // Navigate to edit profile screen
             Navigator.push(
               context,
               MaterialPageRoute(
@@ -84,7 +86,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
             leading: const Icon(Icons.business),
             title: const Text('Become House Agent'),
             onTap: () {
-              // Submit request to become house agent
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -97,7 +98,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
             leading: const Icon(Icons.home),
             title: const Text('Manage Properties'),
             onTap: () {
-              // Navigate to manage properties screen
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ManagePropertiesScreen()),
+              );
             },
           ),
         if (userRole == 'admin') ...[
@@ -105,14 +110,31 @@ class _SettingsScreenState extends State<SettingsScreen> {
             leading: const Icon(Icons.supervised_user_circle),
             title: const Text('Manage Users'),
             onTap: () {
-              // Navigate to manage users screen
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ManageUsersScreen()),
+              );
             },
           ),
           ListTile(
             leading: const Icon(Icons.home_work),
             title: const Text('Manage All Properties'),
             onTap: () {
-              // Navigate to manage all properties screen
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ManagePropertiesScreen()),
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.notifications),
+            title: const Text('Requests'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => AgentRequestsScreen()),
+              );
             },
           ),
         ],

@@ -54,16 +54,16 @@ class PropertyCard extends StatelessWidget {
                   },
                 ),
               ),
-              if (userRole == 'admin' ||
-                  (userRole == 'owner' && property.ownerId == ownerId))
-                Positioned(
-                  top: 10,
-                  right: 10,
-                  child: IconButton(
-                    icon: const Icon(Icons.delete),
-                    onPressed: onDeletePressed,
-                  ),
-                ),
+              //   if (userRole == 'admin' ||
+              //       (userRole == 'owner' && property.ownerId == ownerId))
+              //     Positioned(
+              //       top: 10,
+              //       right: 10,
+              //       child: IconButton(
+              //         icon: const Icon(Icons.delete),
+              //         onPressed: onDeletePressed,
+              //       ),
+              //     ),
             ],
           ),
           Padding(
@@ -106,23 +106,23 @@ class PropertyCard extends StatelessWidget {
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    Icon(
-                      Icons.phone,
-                      color: Colors.blue.shade700,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      property.ownerPhone,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.blue.shade700,
-                      ),
-                    ),
-                  ],
-                ),
+                // const SizedBox(height: 12),
+                // Row(
+                //   children: [
+                //     Icon(
+                //       Icons.phone,
+                //       color: Colors.blue.shade700,
+                //     ),
+                //     const SizedBox(width: 4),
+                //     Text(
+                //       property.ownerPhone,
+                //       style: TextStyle(
+                //         fontSize: 14,
+                //         color: Colors.blue.shade700,
+                //       ),
+                //     ),
+                //   ],
+                // ),
                 const SizedBox(height: 10),
                 Align(
                   alignment: Alignment.centerRight,

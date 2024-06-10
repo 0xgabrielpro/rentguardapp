@@ -4,7 +4,7 @@ import 'package:rentguard/services/api_services.dart';
 import 'package:rentguard/widgets/common_input_field.dart';
 
 class BecomeAgentScreen extends StatefulWidget {
-  const BecomeAgentScreen({super.key});
+  const BecomeAgentScreen({Key? key}) : super(key: key);
 
   @override
   _BecomeAgentScreenState createState() => _BecomeAgentScreenState();
@@ -15,6 +15,7 @@ class _BecomeAgentScreenState extends State<BecomeAgentScreen> {
   final _agencyNameController = TextEditingController();
   final _experienceController = TextEditingController();
   final _contactNumberController = TextEditingController();
+  final _emailController = TextEditingController();
 
   bool _isLoading = false;
 
@@ -34,6 +35,7 @@ class _BecomeAgentScreenState extends State<BecomeAgentScreen> {
             _agencyNameController.text,
             _experienceController.text,
             _contactNumberController.text,
+            _emailController.text,
           );
 
           if (success) {
@@ -50,7 +52,8 @@ class _BecomeAgentScreenState extends State<BecomeAgentScreen> {
           }
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('User ID not found. Please log in again.')),
+            const SnackBar(
+                content: Text('User ID not found. Please log in again.')),
           );
         }
       } catch (e) {
@@ -70,12 +73,17 @@ class _BecomeAgentScreenState extends State<BecomeAgentScreen> {
     _agencyNameController.dispose();
     _experienceController.dispose();
     _contactNumberController.dispose();
+    _emailController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Become an Agent'),
+        backgroundColor: Colors.blue.shade700,
+      ),
       backgroundColor: Colors.grey[200],
       body: Center(
         child: SingleChildScrollView(
@@ -115,12 +123,12 @@ class _BecomeAgentScreenState extends State<BecomeAgentScreen> {
                       ),
                       const SizedBox(height: 10),
                       CommonInputField(
-                        controller: _experienceController,
-                        labelText: 'Experience (years)',
-                        prefixIcon: Icons.timelapse,
+                        controller: _emailController,
+                        labelText: 'Email',
+                        prefixIcon: Icons.email,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Please enter your experience';
+                            return 'Please enter your email';
                           }
                           return null;
                         },
@@ -133,6 +141,18 @@ class _BecomeAgentScreenState extends State<BecomeAgentScreen> {
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please enter your contact number';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 10),
+                      CommonInputField(
+                        controller: _experienceController,
+                        labelText: 'Experience (years)',
+                        prefixIcon: Icons.timelapse,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your experience';
                           }
                           return null;
                         },

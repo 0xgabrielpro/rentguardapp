@@ -48,7 +48,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
         return;
       }
 
-      final response = await ApiService.resetPassword(email!, newPassword);
+      final response =
+          await ApiService.resetPassword(email.toString(), newPassword);
 
       if (response.statusCode == 200) {
         Navigator.pop(context);
@@ -70,6 +71,10 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Reset Password'),
+        backgroundColor: Colors.blue.shade700,
+      ),
       backgroundColor: Colors.grey[200],
       body: Center(
         child: SingleChildScrollView(
@@ -150,7 +155,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                               'Reset Password',
                               style: TextStyle(
                                 fontSize: 18,
-                                  color: Colors.white,
+                                color: Colors.white,
                               ),
                             ),
                           ),

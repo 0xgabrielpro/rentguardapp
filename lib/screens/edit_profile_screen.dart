@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:rentguard/services/api_services.dart';
+import 'package:rentguard/services/auth_service.dart';
 import 'package:rentguard/widgets/common_input_field.dart';
 
 class EditProfileScreen extends StatefulWidget {
@@ -13,9 +13,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
   String? _errorMessage;
-  late int _userId;
+  int? _userId;
 
   @override
   void initState() {
@@ -23,21 +24,25 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _fetchUserProfile();
   }
 
-  void _fetchUserProfile() async {
+  Future<void> _fetchUserProfile() async {
     setState(() {
       _isLoading = true;
+      _errorMessage = null;
     });
     try {
-      // Uncomment and implement the fetch user profile logic
-      // final userProfile = await AuthService.getUserProfile();
-      // _userId = userProfile.id;
-      // _usernameController.text = userProfile.username;
-      // _emailController.text = userProfile.email;
-      // _phoneController.text = userProfile.phone;
+      final userProfile = await AuthService.getUserProfile();
+      setState(() {
+        _userId = userProfile['user']['id'] ?? 0;
+        _usernameController.text = userProfile['user']['username'] ?? '';
+        _emailController.text = userProfile['user']['email'] ?? '';
+        _phoneController.text = userProfile['user']['phone'] ?? '';
+        // print('Fetched user profile: $userProfile');
+      });
     } catch (e) {
       setState(() {
-        _errorMessage = 'Failed to load user profile';
+        _errorMessage = 'Failed to load user profile: $e';
       });
+      print('Error in _fetchUserProfile: $e');
     } finally {
       setState(() {
         _isLoading = false;
@@ -45,7 +50,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     }
   }
 
-  void _updateProfile() async {
+  Future<void> _updateProfile() async {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
     setState(() {
       _isLoading = true;
       _errorMessage = null;
@@ -55,9 +64,25 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     final String newEmail = _emailController.text;
     final String newPhone = _phoneController.text;
 
+    if (newUsername.isEmpty || newEmail.isEmpty || newPhone.isEmpty) {
+      setState(() {
+        _errorMessage = 'Please fill in all fields';
+        _isLoading = false;
+      });
+      return;
+    }
+
+    if (_userId == null) {
+      setState(() {
+        _errorMessage = 'User ID is not available';
+        _isLoading = false;
+      });
+      return;
+    }
+
     try {
-      final success = await ApiService.updateUserProfile(
-          _userId, newUsername, newEmail, newPhone);
+      final success = await AuthService.updateUserProfile(
+          _userId!, newUsername, newEmail, newPhone);
       if (success) {
         Navigator.pop(context);
       } else {
@@ -67,8 +92,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       }
     } catch (e) {
       setState(() {
-        _errorMessage = 'An error occurred while updating profile';
+        _errorMessage = 'An error occurred while updating profile: $e';
       });
+      // print('Error in _updateProfile: $e');
     } finally {
       setState(() {
         _isLoading = false;
@@ -79,6 +105,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Edit Profile'),
+        backgroundColor: Colors.blue.shade700,
+      ),
       backgroundColor: Colors.grey[200],
       body: Center(
         child: SingleChildScrollView(
@@ -106,68 +136,83 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     _isLoading
                         ? const CircularProgressIndicator()
                         : _errorMessage != null
-                            ? Center(child: Text(_errorMessage!))
-                            : Column(
-                                children: [
-                                  CommonInputField(
-                                    controller: _usernameController,
-                                    labelText: 'Username',
-                                    prefixIcon: Icons.person,
-                                  ),
-                                  const SizedBox(height: 10),
-                                  CommonInputField(
-                                    controller: _emailController,
-                                    labelText: 'Email',
-                                    prefixIcon: Icons.email,
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Please enter an email';
-                                      }
-                                      if (!RegExp(r'^[^@]+@[^@]+\.[^@]+')
-                                          .hasMatch(value)) {
-                                        return 'Please enter a valid email';
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                  const SizedBox(height: 10),
-                                  CommonInputField(
-                                    controller: _phoneController,
-                                    labelText: 'Phone',
-                                    prefixIcon: Icons.phone,
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Please enter a phone number';
-                                      }
-                                      if (!RegExp(r'^[0-9]+$')
-                                          .hasMatch(value)) {
-                                        return 'Please enter a valid phone number';
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                  const SizedBox(height: 20),
-                                  ElevatedButton(
-                                    onPressed: _updateProfile,
-                                    style: ElevatedButton.styleFrom(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 50,
-                                        vertical: 15,
-                                      ),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      backgroundColor: Colors.blue.shade700,
+                            ? Center(
+                                child: Text(
+                                  _errorMessage!,
+                                  style: const TextStyle(color: Colors.red),
+                                ),
+                              )
+                            : Form(
+                                key: _formKey,
+                                child: Column(
+                                  children: [
+                                    CommonInputField(
+                                      controller: _usernameController,
+                                      labelText: 'Username',
+                                      prefixIcon: Icons.person,
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Please enter a username';
+                                        }
+                                        return null;
+                                      },
                                     ),
-                                    child: const Text(
-                                      'Save Changes',
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        color: Colors.white,
+                                    const SizedBox(height: 16),
+                                    CommonInputField(
+                                      controller: _emailController,
+                                      labelText: 'Email',
+                                      prefixIcon: Icons.email,
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Please enter an email';
+                                        }
+                                        if (!RegExp(r'^[^@]+@[^@]+\.[^@]+')
+                                            .hasMatch(value)) {
+                                          return 'Please enter a valid email';
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                    const SizedBox(height: 16),
+                                    CommonInputField(
+                                      controller: _phoneController,
+                                      labelText: 'Phone',
+                                      prefixIcon: Icons.phone,
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Please enter a phone number';
+                                        }
+                                        if (!RegExp(r'^[0-9]+$')
+                                            .hasMatch(value)) {
+                                          return 'Please enter a valid phone number';
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                    const SizedBox(height: 20),
+                                    ElevatedButton(
+                                      onPressed: _updateProfile,
+                                      style: ElevatedButton.styleFrom(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 50,
+                                          vertical: 15,
+                                        ),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                        backgroundColor: Colors.blue.shade700,
+                                      ),
+                                      child: const Text(
+                                        'Save Changes',
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          color: Colors.white,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                   ],
                 ),
