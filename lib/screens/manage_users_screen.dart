@@ -37,7 +37,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
         _users = users;
       });
     } catch (e) {
-      print('Error fetching users: $e');
+      print('Error fetching users');
     } finally {
       setState(() {
         _isLoading = false;
@@ -77,7 +77,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
       _clearForm();
       _fetchUsers();
     } catch (e) {
-      print('Error creating/updating user: $e');
+      print('Error creating/updating user');
     } finally {
       setState(() {
         _isLoading = false;
@@ -97,7 +97,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
       await ApiService.deleteUser(userId);
       _fetchUsers();
     } catch (e) {
-      print('Error deleting user: $e');
+      print('Error deleting user');
     } finally {
       setState(() {
         _isLoading = false;

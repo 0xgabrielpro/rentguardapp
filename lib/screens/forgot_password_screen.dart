@@ -50,7 +50,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       }
     } catch (e) {
       setState(() {
-        _errorMessage = e.toString();
+        // _errorMessage = e.toString();
+        _errorMessage = "connection error";
       });
     } finally {
       setState(() {

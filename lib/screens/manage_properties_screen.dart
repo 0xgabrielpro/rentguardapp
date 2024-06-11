@@ -64,7 +64,7 @@ class _ManagePropertiesScreenState extends State<ManagePropertiesScreen> {
         print('Invalid user');
       }
     } catch (e) {
-      print('Error fetching properties: $e');
+      print('Error fetching properties');
     } finally {
       setState(() {
         _isLoading = false;
@@ -104,7 +104,7 @@ class _ManagePropertiesScreenState extends State<ManagePropertiesScreen> {
       _clearForm();
       _fetchProperties();
     } catch (e) {
-      print('Error creating/updating property: $e');
+      print('Error creating/updating property');
     } finally {
       setState(() {
         _isLoading = false;
@@ -142,7 +142,7 @@ class _ManagePropertiesScreenState extends State<ManagePropertiesScreen> {
         await ApiService.deleteProperty(propertyId);
         _fetchProperties();
       } catch (e) {
-        print('Error deleting property: $e');
+        print('Error deleting property');
       } finally {
         setState(() {
           _isLoading = false;
@@ -230,7 +230,7 @@ class _ManagePropertiesScreenState extends State<ManagePropertiesScreen> {
                                   return null;
                                 },
                               ),
-                      	      const SizedBox(height: 10),
+                              const SizedBox(height: 10),
                               CommonInputField(
                                 controller: _imageController,
                                 labelText: 'Image URL',

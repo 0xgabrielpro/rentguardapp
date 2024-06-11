@@ -28,7 +28,7 @@ class _AgentRequestsScreenState extends State<AgentRequestsScreen> {
         _requests = requests;
       });
     } catch (e) {
-      print('Error fetching requests: $e');
+      print('Error fetching requests');
     } finally {
       setState(() {
         _isLoading = false;
@@ -66,7 +66,7 @@ class _AgentRequestsScreenState extends State<AgentRequestsScreen> {
         await ApiService.deleteAgentRequest(requestId);
         _fetchRequests();
       } catch (e) {
-        print('Error deleting request: $e');
+        print('Error deleting request');
       } finally {
         setState(() {
           _isLoading = false;

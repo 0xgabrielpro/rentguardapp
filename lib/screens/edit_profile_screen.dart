@@ -40,7 +40,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       });
     } catch (e) {
       setState(() {
-        _errorMessage = 'Failed to load user profile: $e';
+        _errorMessage = 'Failed to load user profile';
       });
       print('Error in _fetchUserProfile: $e');
     } finally {

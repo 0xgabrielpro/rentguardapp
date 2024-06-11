@@ -58,7 +58,7 @@ class _BecomeAgentScreenState extends State<BecomeAgentScreen> {
         }
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e')),
+          SnackBar(content: Text('Error')),
         );
       } finally {
         setState(() {
