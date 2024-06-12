@@ -1,5 +1,9 @@
+import 'dart:io';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:http/http.dart' as http;
 import 'package:rentguard/services/api_services.dart';
 import 'package:rentguard/models/property.dart';
 import 'package:rentguard/widgets/common_input_field.dart';
@@ -10,16 +14,8 @@ class ManagePropertiesScreen extends StatefulWidget {
 }
 
 class _ManagePropertiesScreenState extends State<ManagePropertiesScreen> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController _locationController = TextEditingController();
-  final TextEditingController _priceController = TextEditingController();
-  final TextEditingController _descriptionController = TextEditingController();
-  final TextEditingController _imageController = TextEditingController();
-
   List<Property> _properties = [];
   bool _isLoading = false;
-  bool _isEditing = false;
-  int? _editingPropertyId;
   int? _ownerId;
 
   @override
@@ -58,53 +54,13 @@ class _ManagePropertiesScreenState extends State<ManagePropertiesScreen> {
             _properties = properties;
           });
         } else {
-          print('NOT FOUND');
+          print('NOT FOUND3');
         }
       } else {
         print('Invalid user');
       }
     } catch (e) {
       print('Error fetching properties');
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
-  }
-
-  Future<void> _createOrUpdateProperty() async {
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
-
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      if (_isEditing && _editingPropertyId != null) {
-        await ApiService.updateProperty(
-          _editingPropertyId!,
-          _locationController.text,
-          double.parse(_priceController.text),
-          _descriptionController.text,
-          _imageController.text,
-          _ownerId!,
-        );
-      } else {
-        await ApiService.createProperty(
-          _locationController.text,
-          double.parse(_priceController.text),
-          _descriptionController.text,
-          _imageController.text,
-          _ownerId!,
-        );
-      }
-
-      _clearForm();
-      _fetchProperties();
-    } catch (e) {
-      print('Error creating/updating property');
     } finally {
       setState(() {
         _isLoading = false;
@@ -151,22 +107,21 @@ class _ManagePropertiesScreenState extends State<ManagePropertiesScreen> {
     }
   }
 
-  void _clearForm() {
-    _locationController.clear();
-    _priceController.clear();
-    _descriptionController.clear();
-    _imageController.clear();
-    _isEditing = false;
-    _editingPropertyId = null;
-  }
-
-  void _populateForm(Property property) {
-    _locationController.text = property.location;
-    _priceController.text = property.price.toString();
-    _descriptionController.text = property.description;
-    _imageController.text = property.image;
-    _isEditing = true;
-    _editingPropertyId = property.id;
+  void _showPropertyFormDialog({Property? property}) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return PropertyFormDialog(
+          property: property,
+          ownerId: _ownerId,
+          onFormSubmit: (success) {
+            if (success) {
+              _fetchProperties();
+            }
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -182,88 +137,7 @@ class _ManagePropertiesScreenState extends State<ManagePropertiesScreen> {
           children: [
             ElevatedButton(
               onPressed: () {
-                _clearForm();
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: Text('Add Property'),
-                      content: Form(
-                        key: _formKey,
-                        child: SingleChildScrollView(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              CommonInputField(
-                                controller: _locationController,
-                                labelText: 'Location',
-                                prefixIcon: Icons.location_on,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter a location';
-                                  }
-                                  return null;
-                                },
-                              ),
-                              const SizedBox(height: 10),
-                              CommonInputField(
-                                controller: _priceController,
-                                labelText: 'Price',
-                                prefixIcon: Icons.attach_money,
-                                keyboardType: TextInputType.number,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter a price';
-                                  }
-                                  return null;
-                                },
-                              ),
-                              const SizedBox(height: 10),
-                              CommonInputField(
-                                controller: _descriptionController,
-                                labelText: 'Description',
-                                prefixIcon: Icons.description,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter a description';
-                                  }
-                                  return null;
-                                },
-                              ),
-                              const SizedBox(height: 10),
-                              CommonInputField(
-                                controller: _imageController,
-                                labelText: 'Image URL',
-                                prefixIcon: Icons.image,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter an image URL';
-                                  }
-                                  return null;
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      actions: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          child: Text('Cancel'),
-                        ),
-                        ElevatedButton(
-                          onPressed: () {
-                            _createOrUpdateProperty();
-                            Navigator.of(context).pop();
-                          },
-                          child: Text('Add Property'),
-                        ),
-                      ],
-                    );
-                  },
-                );
+                _showPropertyFormDialog();
               },
               child: Text('Add Property'),
             ),
@@ -285,101 +159,7 @@ class _ManagePropertiesScreenState extends State<ManagePropertiesScreen> {
                                 IconButton(
                                   icon: Icon(Icons.edit),
                                   onPressed: () {
-                                    _populateForm(property);
-                                    showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return AlertDialog(
-                                          title: Text('Edit Property'),
-                                          content: Form(
-                                            key: _formKey,
-                                            child: SingleChildScrollView(
-                                              child: Column(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  CommonInputField(
-                                                    controller:
-                                                        _locationController,
-                                                    labelText: 'Location',
-                                                    prefixIcon:
-                                                        Icons.location_on,
-                                                    validator: (value) {
-                                                      if (value == null ||
-                                                          value.isEmpty) {
-                                                        return 'Please enter a location';
-                                                      }
-                                                      return null;
-                                                    },
-                                                  ),
-                                                  SizedBox(height: 10),
-                                                  CommonInputField(
-                                                    controller:
-                                                        _priceController,
-                                                    labelText: 'Price',
-                                                    prefixIcon:
-                                                        Icons.attach_money,
-                                                    keyboardType:
-                                                        TextInputType.number,
-                                                    validator: (value) {
-                                                      if (value == null ||
-                                                          value.isEmpty) {
-                                                        return 'Please enter a price';
-                                                      }
-                                                      return null;
-                                                    },
-                                                  ),
-                                                  SizedBox(height: 10),
-                                                  CommonInputField(
-                                                    controller:
-                                                        _descriptionController,
-                                                    labelText: 'Description',
-                                                    prefixIcon:
-                                                        Icons.description,
-                                                    validator: (value) {
-                                                      if (value == null ||
-                                                          value.isEmpty) {
-                                                        return 'Please enter a description';
-                                                      }
-                                                      return null;
-                                                    },
-                                                  ),
-                                                  SizedBox(height: 10),
-                                                  CommonInputField(
-                                                    controller:
-                                                        _imageController,
-                                                    labelText: 'Image URL',
-                                                    prefixIcon: Icons.image,
-                                                    validator: (value) {
-                                                      if (value == null ||
-                                                          value.isEmpty) {
-                                                        return 'Please enter an image URL';
-                                                      }
-                                                      return null;
-                                                    },
-                                                  ),
-                                                  SizedBox(height: 10),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                          actions: [
-                                            TextButton(
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                              child: Text('Cancel'),
-                                            ),
-                                            ElevatedButton(
-                                              onPressed: () {
-                                                _createOrUpdateProperty();
-                                                Navigator.of(context).pop();
-                                              },
-                                              child: Text('Update Property'),
-                                            ),
-                                          ],
-                                        );
-                                      },
-                                    );
+                                    _showPropertyFormDialog(property: property);
                                   },
                                 ),
                                 IconButton(
@@ -396,6 +176,190 @@ class _ManagePropertiesScreenState extends State<ManagePropertiesScreen> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class PropertyFormDialog extends StatefulWidget {
+  final Property? property;
+  final int? ownerId;
+  final Function(bool success) onFormSubmit;
+
+  PropertyFormDialog({
+    this.property,
+    required this.ownerId,
+    required this.onFormSubmit,
+  });
+
+  @override
+  _PropertyFormDialogState createState() => _PropertyFormDialogState();
+}
+
+class _PropertyFormDialogState extends State<PropertyFormDialog> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController _locationController = TextEditingController();
+  final TextEditingController _priceController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
+  XFile? _selectedImage;
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.property != null) {
+      _populateForm(widget.property!);
+    }
+  }
+
+  void _populateForm(Property property) {
+    _locationController.text = property.location;
+    _priceController.text = property.price.toString();
+    _descriptionController.text = property.description;
+  }
+
+  Future<void> _pickImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      setState(() {
+        _selectedImage = pickedFile;
+      });
+    }
+  }
+
+  Future<void> _createOrUpdateProperty() async {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final location = _locationController.text;
+      final price = double.parse(_priceController.text);
+      final description = _descriptionController.text;
+
+      if (widget.property != null) {
+        print('Updating property: ${widget.property!.id}');
+        print('Location: $location');
+        print('Price: $price');
+        print('Description: $description');
+        print('Owner ID: ${widget.ownerId}');
+        await ApiService.updateProperty(
+          widget.property!.id,
+          location,
+          price,
+          description,
+          _selectedImage,
+          widget.ownerId!,
+        );
+      } else {
+        print('Creating property');
+        print('Location: $location');
+        print('Price: $price');
+        print('Description: $description');
+        print('Owner ID: ${widget.ownerId}');
+        await ApiService.createProperty(
+          location,
+          price,
+          description,
+          _selectedImage,
+          widget.ownerId!,
+        );
+      }
+
+      widget.onFormSubmit(true);
+      Navigator.of(context).pop();
+    } catch (e) {
+      print('Error creating/updating property: $e');
+      widget.onFormSubmit(false);
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text(widget.property != null ? 'Edit Property' : 'Add Property'),
+      content: Form(
+        key: _formKey,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CommonInputField(
+                controller: _locationController,
+                labelText: 'Location',
+                prefixIcon: Icons.location_on,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a location';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 10),
+              CommonInputField(
+                controller: _priceController,
+                labelText: 'Price',
+                prefixIcon: Icons.attach_money,
+                keyboardType: TextInputType.number,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a price';
+                  } else if (double.tryParse(value) == null) {
+                    return 'Please enter a valid price';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 10),
+              CommonInputField(
+                controller: _descriptionController,
+                labelText: 'Description',
+                prefixIcon: Icons.description,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a description';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 10),
+              ElevatedButton(
+                onPressed: _pickImage,
+                child: Text('Select Image'),
+              ),
+              if (_selectedImage != null)
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: kIsWeb
+                      ? Image.network(_selectedImage!.path, height: 200)
+                      : Image.file(File(_selectedImage!.path), height: 200),
+                ),
+            ],
+          ),
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: Text('Cancel'),
+        ),
+        ElevatedButton(
+          onPressed: _createOrUpdateProperty,
+          child: Text(
+              widget.property != null ? 'Update Property' : 'Add Property'),
+        ),
+      ],
     );
   }
 }

@@ -1,8 +1,12 @@
-import 'package:http/http.dart' as http;
-import 'package:rentguard/models/agrequest.dart';
-import 'package:rentguard/utils/constants.dart';
 import 'dart:convert';
+import 'dart:io';
+import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
+import 'package:rentguard/models/agrequest.dart';
 import 'package:rentguard/models/property.dart';
+import 'package:rentguard/utils/constants.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:path/path.dart';
 
 class ApiService {
   static Future<http.Response> postRequest(
@@ -50,55 +54,104 @@ class ApiService {
     }
   }
 
-  static Future<void> createProperty(String location, double price,
-      String description, String image, int ownerId) async {
-    final url = Uri.parse('$baseUrl/properties/upload');
-    try {
-      final response = await http.post(
-        url,
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode({
-          'location': location,
-          'price': price,
-          'description': description,
-          'image': image,
-          'owner_id': ownerId,
-        }),
-      );
+  static Future<void> createProperty(
+    String location,
+    double price,
+    String description,
+    XFile? image,
+    int ownerId,
+  ) async {
+    var uri = Uri.parse('$baseUrl/properties/upload');
+    var request = http.MultipartRequest('POST', uri);
+    request.fields['location'] = location;
+    request.fields['price'] = price.toString();
+    request.fields['description'] = description;
+    request.fields['ownerId'] = ownerId.toString();
 
-      if (response.statusCode != 201) {
-        throw Exception('Failed to create property');
+    if (image != null) {
+      if (kIsWeb) {
+        var imageBytes = await image.readAsBytes();
+        var multiPartFile = http.MultipartFile.fromBytes(
+          'image',
+          imageBytes,
+          filename: image.name,
+        );
+        request.files.add(multiPartFile);
+      } else {
+        var multiPartFile = await http.MultipartFile.fromPath(
+          'image',
+          image.path,
+        );
+        request.files.add(multiPartFile);
       }
-    } catch (e) {
-      print('Error creating property: $e');
-      throw Exception('Failed to create property: $e');
+    }
+
+    var response = await request.send();
+    if (response.statusCode == 201) {
+      print('Property created successfully');
+    } else {
+      throw Exception('Failed to create property: ${response.reasonPhrase}');
     }
   }
 
-  static Future<void> updateProperty(int id, String location, double price,
-      String description, String image, int ownerId) async {
-    final url = Uri.parse('$baseUrl/properties/$id');
-    try {
-      final response = await http.put(
-        url,
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode({
-          'location': location,
-          'price': price,
-          'description': description,
-          'image': image,
-          'owner_id': ownerId,
-        }),
-      );
+  static Future<void> updateProperty(
+  int id,
+  String location,
+  double price,
+  String description,
+  XFile? image,
+  int ownerId,
+) async {
+  var uri = Uri.parse('$baseUrl/properties/$id');
+  var request = http.MultipartRequest('POST', uri);
 
-      if (response.statusCode != 200) {
-        throw Exception('Failed to update property');
-      }
-    } catch (e) {
-      print('Error updating property: $e');
-      throw Exception('Failed to update property: $e');
+  request.fields['location'] = location;
+  request.fields['price'] = price.toString();
+  request.fields['description'] = description;
+  request.fields['ownerId'] = ownerId.toString();
+
+  if (image != null) {
+    if (kIsWeb) {
+      var imageBytes = await image.readAsBytes();
+      var multiPartFile = http.MultipartFile.fromBytes(
+        'image',
+        imageBytes,
+        filename: image.name,
+      );
+      request.files.add(multiPartFile);
+    } else {
+      var multiPartFile = await http.MultipartFile.fromPath(
+        'image',
+        image.path,
+      );
+      request.files.add(multiPartFile);
     }
   }
+
+  print('Request fields: ${request.fields}');
+  if (request.files.isNotEmpty) {
+    print('Request files: ${request.files.first.filename}');
+  } else {
+    print('No image file attached');
+  }
+
+  try {
+    var response = await request.send();
+    var responseBody = await response.stream.bytesToString();
+
+    if (response.statusCode == 200) {
+      print('Property updated successfully');
+    } else {
+      print('Failed to update property: ${response.reasonPhrase}');
+      print('Response body: $responseBody');
+      throw Exception('Failed to update property: ${response.reasonPhrase}');
+    }
+  } catch (e) {
+    print('Exception during updateProperty: $e');
+    throw Exception('Failed to update property: $e');
+  }
+}
+
 
   static Future<void> deleteProperty(int id) async {
     final url = Uri.parse('$baseUrl/properties/$id');
@@ -179,7 +232,6 @@ class ApiService {
       url,
       headers: {
         'Content-Type': 'application/json',
-        // 'Authorization': 'Bearer $token',
       },
       body: jsonEncode({
         'email': email,
@@ -277,7 +329,6 @@ class ApiService {
 
   static Future<List<Property>> fetchPropertiesByOwnerId(int ownerId) async {
     final url = Uri.parse('$baseUrl/properties/owner/$ownerId');
-
     try {
       final response =
           await http.get(url, headers: {'Content-Type': 'application/json'});
@@ -332,7 +383,6 @@ class ApiService {
 
   static Future<void> makeUserOwner(int userId) async {
     final url = Uri.parse('$baseUrl/admin/users/$userId/make-owner');
-
     try {
       final response =
           await http.put(url, headers: {'Content-Type': 'application/json'});
